@@ -45,7 +45,7 @@
     name: 'Header',
     data() {
       return {
-          navToggle: false
+        navToggle: false,
       }
     }
   }

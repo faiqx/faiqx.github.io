@@ -66,7 +66,3 @@ export async function getTimeline() {
   }));
 }
 
-/** Ids of case studies that will actually render, for guarding cross-links. */
-export async function getVisibleCaseStudyIds(): Promise<Set<string>> {
-  return new Set((await getCaseStudies()).map((entry) => entry.id));
-}

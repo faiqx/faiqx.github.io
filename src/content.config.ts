@@ -84,8 +84,6 @@ const projects = defineCollection({
        * independent work, which is attributed to "Personal".
        */
       chapter: reference('chapters').optional(),
-      /** FK → work. The case study that goes deeper on this project. */
-      caseStudy: reference('work').optional(),
       date: z.coerce.date(),
       status,
     }),

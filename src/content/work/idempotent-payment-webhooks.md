@@ -3,6 +3,7 @@ title: Taking money over an untrusted callback
 summary: A booking-and-payments engine where replays and races are the expected case.
 description: Building a dive-resort booking and payments engine with idempotent, spoof-resistant webhooks and a USD-priced, IDR-charged currency model.
 chapter: wood-wide-web
+linkLabel: The payments engine
 year: '2025'
 date: 2025-02-01
 outcome: 'Every payment path assumes a hostile environment: replays and races are handled as the expected case, not the edge case.'

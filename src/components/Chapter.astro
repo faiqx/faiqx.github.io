@@ -50,19 +50,22 @@ const titleId = `chapter-title-${index}`;
     <span class="fade" data-chapter-fade aria-hidden="true"></span>
   </div>
 
-  <div class="actions">
-    <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
-      <span data-chapter-label>Read the chapter &darr;</span>
-      <span class="sr-only">: {title}</span>
-    </button>
-    {
-      caseStudies.map((entry) => (
-        <a class="case-study" href={`/work/${entry.id}/`}>
-          {entry.data.linkLabel} &rarr;
-        </a>
-      ))
-    }
-  </div>
+  <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
+    <span data-chapter-label>Read the chapter &darr;</span>
+    <span class="sr-only">: {title}</span>
+  </button>
+
+  {
+    caseStudies.length > 0 && (
+      <ul class="related">
+        {caseStudies.map((entry) => (
+          <li>
+            <a href={`/work/${entry.id}/`}>{entry.data.linkLabel}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </article>
 
 <style>
@@ -130,6 +133,11 @@ const titleId = `chapter-title-${index}`;
   }
 
   .body {
+    /* Body copy is 16px at 1.65, so one line is 26.4px. The collapsed peek is
+       expressed in lines rather than a magic pixel height, so changing either
+       type value keeps the peek exactly this many lines. */
+    --line: calc(16px * 1.65);
+    --peek-lines: 2;
     position: relative;
     overflow: hidden;
     transition: max-height 0.5s ease;
@@ -152,43 +160,54 @@ const titleId = `chapter-title-${index}`;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 60px;
+    height: calc(var(--line) * 1.25);
     background: linear-gradient(rgba(245, 245, 244, 0), var(--bg));
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
   }
 
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 10px clamp(16px, 3vw, 24px);
+  /* A disclosure control, not navigation: it belongs to the body text above
+     it, so it stays quiet and sits on its own line. */
+  .toggle {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--underline);
+    padding: 0;
     margin-top: 14px;
-  }
-
-  .toggle,
-  .case-study {
     font-family: var(--mono);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--secondary);
-    border-bottom: 1px solid var(--underline);
-  }
-
-  .toggle {
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    padding: 0;
     cursor: pointer;
     display: none;
   }
 
-  .case-study {
+  /* Links away from the page. Separated from the toggle and marked with a
+     rule so the two don't read as one row of equivalent choices. */
+  .related {
+    list-style: none;
+    margin: clamp(18px, 3vw, 22px) 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px clamp(18px, 3vw, 28px);
+  }
+
+  .related a {
+    font-size: 14px;
+    font-weight: 500;
     color: var(--ink);
+    border-bottom: 1px solid var(--underline);
+  }
+
+  .related a::after {
+    content: ' →';
+    color: var(--muted);
+    font-weight: 400;
   }
 
   .sr-only {
@@ -214,7 +233,7 @@ const titleId = `chapter-title-${index}`;
   }
 
   :global(html.js) .body {
-    max-height: 92px;
+    max-height: calc(var(--line) * var(--peek-lines));
   }
 
   :global(html.js) .body.is-open {

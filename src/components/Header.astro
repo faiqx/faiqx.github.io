@@ -5,7 +5,7 @@ import { getCaseStudies, getProjects } from '../data/content';
 // Sections only appear in the nav once they have something in them.
 const [work, projects] = await Promise.all([getCaseStudies(), getProjects()]);
 const links = [
-  work.length > 0 && { href: '/work/', label: 'Work' },
+  work.length > 0 && { href: '/work/', label: 'Case studies' },
   projects.length > 0 && { href: '/projects/', label: 'Projects' },
 ].filter(Boolean) as { href: string; label: string }[];
 ---

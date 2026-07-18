@@ -9,8 +9,10 @@
   --border: #dbdbda;
   --underline: #cfcfce;
 
-  --sans: 'Hanken Grotesk', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Set by Astro's font pipeline (see `fonts` in astro.config.mjs), which
+     appends metric-matched fallbacks to each stack. */
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
 
   --measure: 760px;
   --prose: 620px;
@@ -64,12 +66,16 @@ a {
 }
 
 /* Shared section furniture */
+/* Rendered as <h2> for a correct document outline; the margin and weight
+   resets keep it looking exactly like the label it reads as. */
 .section-label {
   font-family: var(--mono);
   font-size: 12px;
+  font-weight: 400;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
+  margin: 0;
 }
 
 .rule {

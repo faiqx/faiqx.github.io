@@ -46,7 +46,7 @@ import portrait from '../assets/photo.jpeg';
 
     <!-- the story so far -->
     <section id="story" class="rule story">
-      <div class="section-label">The story so far</div>
+      <h2 class="section-label">The story so far</h2>
       <div class="timeline">
         {chapters.map((chapter, index) => <Chapter chapter={chapter} index={index} />)}
       </div>
@@ -54,7 +54,7 @@ import portrait from '../assets/photo.jpeg';
 
     <!-- how I work -->
     <section id="how" class="rule how">
-      <div class="section-label">How I work</div>
+      <h2 class="section-label">How I work</h2>
       <div class="principles">
         {principles.map((principle) => <Principle principle={principle} />)}
       </div>
@@ -63,7 +63,7 @@ import portrait from '../assets/photo.jpeg';
 
     <!-- in others' words -->
     <section id="words" class="rule words">
-      <div class="section-label">In others&rsquo; words</div>
+      <h2 class="section-label">In others&rsquo; words</h2>
       <div class="quotes">
         {testimonials.map((testimonial) => <Testimonial testimonial={testimonial} />)}
       </div>

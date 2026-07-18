@@ -7,5 +7,7 @@ export const site = {
   url: 'https://faiqx.github.io',
   email: 'faiqxallam@gmail.com',
   linkedin: 'https://www.linkedin.com/in/faiqx',
+  /* Not linked in visible copy — used only as a `sameAs` entity signal. */
+  github: 'https://github.com/faiqx',
   googleSiteVerification: 'PyC0pXe33ZPfpV21Stl6oekQ0As-vXhFma4_ix9VWhs',
 } as const;

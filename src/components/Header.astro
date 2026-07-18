@@ -1,0 +1,50 @@
+---
+import { site, nav } from '../data/site';
+---
+
+<header>
+  <div class="bar">
+    <a class="wordmark" href="#top">{site.name}</a>
+    <nav>
+      {nav.map(({ href, label }) => <a href={href}>{label}</a>)}
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(245, 245, 244, 0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .bar {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 18px var(--gutter);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .wordmark {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  nav {
+    display: flex;
+    gap: clamp(16px, 4vw, 28px);
+    font-size: 14px;
+    color: var(--secondary);
+  }
+
+  nav a {
+    white-space: nowrap;
+  }
+</style>

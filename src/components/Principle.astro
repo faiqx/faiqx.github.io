@@ -1,0 +1,30 @@
+---
+import type { Principle } from '../data/principles';
+
+interface Props {
+  principle: Principle;
+}
+
+const { principle } = Astro.props;
+---
+
+<div>
+  <h3>{principle.title}</h3>
+  <p set:html={principle.body} />
+</div>
+
+<style>
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+</style>

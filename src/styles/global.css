@@ -1,0 +1,77 @@
+/* Design tokens — true-neutral monochrome, deliberately not warm/cream. */
+:root {
+  --bg: #f5f5f4;
+  --ink: #18181a;
+  --body: #48484a;
+  --secondary: #5e5e60;
+  --muted: #8e8e90;
+  --hairline: #e7e7e6;
+  --border: #dbdbda;
+  --underline: #cfcfce;
+
+  --sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --measure: 760px;
+  --prose: 620px;
+  --gutter: clamp(22px, 5vw, 40px);
+  --section-pad: clamp(48px, 8vw, 64px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Shared section furniture */
+.section-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rule {
+  border-top: 1px solid var(--hairline);
+}

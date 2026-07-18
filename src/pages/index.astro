@@ -1,0 +1,246 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Chapter from '../components/Chapter.astro';
+import Principle from '../components/Principle.astro';
+import Testimonial from '../components/Testimonial.astro';
+import { chapters } from '../data/chapters';
+import { principles, stackLine } from '../data/principles';
+import { testimonials } from '../data/testimonials';
+import { site } from '../data/site';
+import portrait from '../assets/photo.jpeg';
+---
+
+<Base>
+  <Header />
+
+  <main id="top">
+    <!-- opening -->
+    <section class="opening">
+      <div class="kicker">{site.role} · seven years in</div>
+      <h1>
+        For seven years I&rsquo;ve been the engineer teams reach for when the system simply has
+        to&nbsp;work.
+      </h1>
+    </section>
+
+    <!-- intro + portrait -->
+    <section class="intro">
+      <Image
+        class="portrait"
+        src={portrait}
+        alt={`Portrait of ${site.name}`}
+        widths={[150, 300]}
+        sizes="clamp(120px, 26vw, 150px)"
+        loading="eager"
+      />
+      <p>
+        I build and scale SaaS platforms across healthcare, AI, and workforce management, mostly
+        for international startups, and mostly for products the public never sees but that
+        thousands of people depend on every day. I care about the quiet parts: the data model that
+        holds, the migration that doesn&rsquo;t wake anyone at 3am, the test suite that catches the
+        bug before a user does.
+      </p>
+    </section>
+
+    <!-- the story so far -->
+    <section id="story" class="rule story">
+      <div class="section-label">The story so far</div>
+      <div class="timeline">
+        {chapters.map((chapter, index) => <Chapter chapter={chapter} index={index} />)}
+      </div>
+    </section>
+
+    <!-- how I work -->
+    <section id="how" class="rule how">
+      <div class="section-label">How I work</div>
+      <div class="principles">
+        {principles.map((principle) => <Principle principle={principle} />)}
+      </div>
+      <p class="stack">{stackLine}</p>
+    </section>
+
+    <!-- in others' words -->
+    <section id="words" class="rule words">
+      <div class="section-label">In others&rsquo; words</div>
+      <div class="quotes">
+        {testimonials.map((testimonial) => <Testimonial testimonial={testimonial} />)}
+      </div>
+    </section>
+
+    <!-- closing / contact -->
+    <section id="contact" class="rule contact">
+      <p class="statement">
+        Now I&rsquo;m looking for the next hard system worth owning. Ideally one where reliability
+        is a feature, not an afterthought.
+      </p>
+      <p class="signoff">
+        If that sounds like something you&rsquo;re building, write to me at <a
+          href={`mailto:${site.email}`}>{site.email}</a
+        >. Or find me on <a href={site.linkedin} target="_blank" rel="noopener noreferrer"
+          >LinkedIn</a
+        >.
+      </p>
+    </section>
+
+    <footer class="rule">
+      <span>&copy; 2026 {site.name}</span>
+      <span>Jakarta time, EU hours</span>
+    </footer>
+  </main>
+</Base>
+
+<script>
+  import '../scripts/chapters';
+</script>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* opening */
+  .opening {
+    padding: clamp(64px, 11vw, 104px) 0 clamp(44px, 7vw, 64px);
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: clamp(26px, 5vw, 36px);
+  }
+
+  h1 {
+    font-size: clamp(31px, 5.6vw, 48px);
+    line-height: 1.16;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* intro + portrait */
+  .intro {
+    padding-bottom: clamp(56px, 9vw, 80px);
+    display: flex;
+    gap: clamp(24px, 5vw, 40px);
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .intro :global(.portrait) {
+    width: clamp(120px, 26vw, 150px);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    flex: 0 0 auto;
+    filter: grayscale(0.25);
+    border: 1px solid var(--border);
+  }
+
+  .intro p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    flex: 1 1 340px;
+    text-wrap: pretty;
+  }
+
+  /* story */
+  .story {
+    padding-top: var(--section-pad);
+  }
+
+  .story .section-label {
+    margin-bottom: clamp(40px, 7vw, 56px);
+  }
+
+  .timeline {
+    border-left: 1px solid var(--border);
+    margin-left: 5px;
+  }
+
+  /* how I work */
+  .how,
+  .words {
+    padding: var(--section-pad) 0;
+  }
+
+  .how .section-label,
+  .words .section-label {
+    margin-bottom: clamp(28px, 5vw, 40px);
+  }
+
+  .principles {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(24px, 4vw, 32px);
+    max-width: var(--prose);
+  }
+
+  .stack {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin: clamp(32px, 5vw, 44px) 0 0;
+  }
+
+  /* testimonials */
+  .quotes {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 5vw, 40px);
+    max-width: var(--prose);
+  }
+
+  /* closing / contact */
+  .contact {
+    padding: clamp(56px, 9vw, 80px) 0 clamp(40px, 6vw, 56px);
+  }
+
+  .statement {
+    font-size: clamp(21px, 3.3vw, 26px);
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 clamp(24px, 4vw, 32px);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+
+  .signoff {
+    font-size: clamp(16px, 2.3vw, 18px);
+    line-height: 1.7;
+    color: var(--body);
+    margin: 0 0 clamp(28px, 5vw, 36px);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+
+  .signoff a {
+    color: var(--ink);
+    font-weight: 500;
+    border-bottom: 1px solid var(--underline);
+  }
+
+  /* footer */
+  footer {
+    padding: 28px 0 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

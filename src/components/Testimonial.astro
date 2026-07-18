@@ -1,0 +1,37 @@
+---
+import type { Testimonial } from '../data/testimonials';
+
+interface Props {
+  testimonial: Testimonial;
+}
+
+const { testimonial } = Astro.props;
+---
+
+<figure>
+  <blockquote>&ldquo;{testimonial.quote}&rdquo;</blockquote>
+  <figcaption>
+    &mdash; {testimonial.name}<br /><span set:html={testimonial.relationship} />
+  </figcaption>
+</figure>
+
+<style>
+  figure {
+    margin: 0;
+  }
+
+  blockquote {
+    margin: 0 0 12px;
+    font-size: clamp(16px, 2.3vw, 18px);
+    line-height: 1.6;
+    color: var(--body);
+    text-wrap: pretty;
+  }
+
+  figcaption {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+</style>

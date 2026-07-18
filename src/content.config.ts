@@ -40,6 +40,8 @@ const chapters = defineCollection({
     year: z.string(),
     /** Optional outbound company link shown before the location. */
     company: z.string().optional(),
+    /** Compact label for attribution elsewhere, e.g. on a project row. */
+    shortName: z.string().optional(),
     companyUrl: z.url().optional(),
     location: z.string(),
     title: z.string(),
@@ -75,10 +77,12 @@ const projects = defineCollection({
       url: z.url(),
       summary: z.string(),
       role: z.string(),
-      year: z.string(),
       stack: z.array(z.string()),
       thumbnail: image().optional(),
-      /** FK → chapters. Which experience this was built during. */
+      /**
+       * FK → chapters. Which experience this was built during. Omit for
+       * independent work, which is attributed to "Personal".
+       */
       chapter: reference('chapters').optional(),
       /** FK → work. The case study that goes deeper on this project. */
       caseStudy: reference('work').optional(),

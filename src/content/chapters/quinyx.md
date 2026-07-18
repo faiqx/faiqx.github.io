@@ -1,6 +1,7 @@
 ---
 year: '2019'
 company: Widget Brain &rarr; Quinyx
+shortName: Quinyx
 companyUrl: https://www.quinyx.com
 location: Stockholm · remote · to 2024
 title: From an AI startup to a WFM pioneer

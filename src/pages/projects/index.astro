@@ -2,14 +2,22 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
-import { getProjects, getVisibleCaseStudyIds } from '../../data/content';
+import { getProjects, getVisibleCaseStudyIds, getChapters } from '../../data/content';
 import { site } from '../../data/site';
 
 const entries = await getProjects();
 // Only cross-link case studies that will actually exist in this build.
 const publishedWork = await getVisibleCaseStudyIds();
+// Attribution comes from the chapter FK. Projects without one are independent
+// work, attributed to "Personal".
+const chapters = new Map((await getChapters()).map((c) => [c.id, c.data]));
+const attribution = (chapterId?: string) => {
+  if (!chapterId) return 'Personal';
+  const chapter = chapters.get(chapterId);
+  return chapter?.shortName ?? chapter?.company ?? 'Personal';
+};
 const title = `Projects — ${site.name}`;
-const description = 'Public sites I have designed and shipped.';
+const description = 'Things I have built that are live and public.';
 ---
 
 <Base title={title} description={description}>
@@ -18,7 +26,7 @@ const description = 'Public sites I have designed and shipped.';
   <main>
     <section class="intro">
       <h1>Projects</h1>
-      <p>Public sites I have built. These are live, so the work speaks for itself.</p>
+      <p>Things I have built that are live and public. Each one links straight to the real thing.</p>
     </section>
 
     <ol class="list">
@@ -38,7 +46,7 @@ const description = 'Public sites I have designed and shipped.';
               )}
               <div class="body">
                 <div class="meta">
-                  <span class="year">{entry.data.year}</span>
+                  <span class="entity" set:html={attribution(entry.data.chapter?.id)} />
                   <span class="role">{entry.data.role}</span>
                   {entry.data.status !== 'published' && <span class="draft">{entry.data.status}</span>}
                 </div>
@@ -168,8 +176,8 @@ const description = 'Public sites I have designed and shipped.';
     color: var(--muted);
   }
 
-  .year {
-    font-size: 15px;
+  .entity {
+    font-size: 13px;
     font-weight: 500;
     color: var(--ink);
     letter-spacing: -0.01em;

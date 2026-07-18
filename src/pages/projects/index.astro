@@ -1,0 +1,249 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import { getPublishedProjects, getPublishedWork } from '../../data/work';
+import { site } from '../../data/site';
+
+const entries = await getPublishedProjects();
+// Only cross-link case studies that will actually exist in this build.
+const publishedWork = new Set((await getPublishedWork()).map((entry) => entry.id));
+const title = `Projects — ${site.name}`;
+const description = 'Public sites I have designed and shipped.';
+---
+
+<Base title={title} description={description}>
+  <Header />
+
+  <main>
+    <section class="intro">
+      <h1>Projects</h1>
+      <p>Public sites I have built. These are live, so the work speaks for itself.</p>
+    </section>
+
+    <ol class="list">
+      {
+        entries.map((entry) => (
+          <li>
+            <a href={entry.data.url} target="_blank" rel="noopener noreferrer">
+              {entry.data.thumbnail && (
+                <Image
+                  class="shot"
+                  src={entry.data.thumbnail}
+                  alt={`Screenshot of ${entry.data.name}`}
+                  widths={[320, 640]}
+                  sizes="(max-width: 640px) 100vw, 240px"
+                  loading="lazy"
+                />
+              )}
+              <div class="body">
+                <div class="meta">
+                  <span class="year">{entry.data.year}</span>
+                  <span class="role">{entry.data.role}</span>
+                  {entry.data.draft && <span class="draft">Draft</span>}
+                </div>
+                <h2>{entry.data.name} &nearr;</h2>
+                <p class="summary">{entry.data.summary}</p>
+                <div class="stack">
+                  {entry.data.stack.map((item) => (
+                    <span>{item}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+            {
+              entry.data.caseStudy && publishedWork.has(entry.data.caseStudy) && (
+                <a class="case-study" href={`/work/${entry.data.caseStudy}/`}>
+                  Read the case study &rarr;
+                </a>
+              )
+            }
+          </li>
+        ))
+      }
+    </ol>
+
+    {entries.length === 0 && <p class="empty">No projects published yet.</p>}
+
+    <a class="back" href="/">&larr; Back to the story</a>
+
+    <footer class="rule">
+      <span>&copy; 2026 {site.name}</span>
+      <span>Jakarta time, EU hours</span>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .intro {
+    padding: clamp(48px, 9vw, 80px) 0 clamp(32px, 5vw, 44px);
+    max-width: var(--prose);
+  }
+
+  h1 {
+    font-size: clamp(27px, 4.4vw, 38px);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+
+  .intro p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .list li {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .list > li > a:first-child {
+    display: flex;
+    gap: clamp(20px, 4vw, 32px);
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: clamp(28px, 4vw, 36px) 0 0;
+  }
+
+  .list > li > a:first-child:hover h2 {
+    border-bottom-color: var(--ink);
+  }
+
+  .list > li {
+    padding-bottom: clamp(28px, 4vw, 36px);
+  }
+
+  .case-study {
+    display: inline-block;
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border-bottom: 1px solid var(--underline);
+  }
+
+  /* Same treatment as the portrait, so screenshots sit inside the palette
+     rather than pasted on top of it. */
+  .list :global(.shot) {
+    width: 240px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top;
+    flex: 0 0 auto;
+    filter: grayscale(0.25);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .body {
+    flex: 1 1 300px;
+  }
+
+  .meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .year {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .draft {
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
+  h2 {
+    font-size: clamp(19px, 2.6vw, 21px);
+    font-weight: 600;
+    margin: 0;
+    text-wrap: pretty;
+    display: inline;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .summary {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 8px 0 0;
+    text-wrap: pretty;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .stack span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+  }
+
+  .empty {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--hairline);
+    padding-top: 28px;
+    margin: 0;
+  }
+
+  .back {
+    display: inline-block;
+    margin: clamp(40px, 6vw, 56px) 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border-bottom: 1px solid var(--underline);
+  }
+
+  footer {
+    padding: 28px 0 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

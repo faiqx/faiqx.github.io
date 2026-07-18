@@ -1,13 +1,27 @@
 ---
 import { site } from '../data/site';
+import { getPublishedWork, getPublishedProjects } from '../data/work';
+
+// Sections only appear in the nav once they have something in them.
+const [work, projects] = await Promise.all([getPublishedWork(), getPublishedProjects()]);
+const links = [
+  work.length > 0 && { href: '/work/', label: 'Work' },
+  projects.length > 0 && { href: '/projects/', label: 'Projects' },
+].filter(Boolean) as { href: string; label: string }[];
 ---
 
 <header>
   <div class="bar">
     <a class="wordmark" href="/">{site.name}</a>
-    <nav>
-      <a href="/work/">Work</a>
-    </nav>
+    {
+      links.length > 0 && (
+        <nav>
+          {links.map(({ href, label }) => (
+            <a href={href}>{label}</a>
+          ))}
+        </nav>
+      )
+    }
   </div>
 </header>
 

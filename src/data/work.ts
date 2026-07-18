@@ -8,3 +8,8 @@ export async function getPublishedWork(): Promise<CollectionEntry<'work'>[]> {
   const entries = await getCollection('work', ({ data }) => import.meta.env.DEV || !data.draft);
   return entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
+
+export async function getPublishedProjects(): Promise<CollectionEntry<'projects'>[]> {
+  const entries = await getCollection('projects', ({ data }) => import.meta.env.DEV || !data.draft);
+  return entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}

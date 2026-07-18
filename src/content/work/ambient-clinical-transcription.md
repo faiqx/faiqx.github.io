@@ -13,7 +13,6 @@ stack:
 status: draft
 ---
 
-<!-- SKELETON. Structure only. All prose is Faiq's to write. -->
 
 ## The constraint
 

@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-output.mjs",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "check:output": "node scripts/check-output.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

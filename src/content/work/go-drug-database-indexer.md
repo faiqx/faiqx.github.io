@@ -14,11 +14,6 @@ stack:
 status: published
 ---
 
-<!--
-  DRAFT. Written by Claude from what is already public in the timeline chapter,
-  as a structural proof of concept. Every paragraph needs Faiq's review, and the
-  spots marked TODO are specifics only he knows. Do not publish as-is.
--->
 
 ## The constraint
 

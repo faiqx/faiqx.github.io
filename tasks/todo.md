@@ -1,80 +1,84 @@
-# Rebuild faiqx.github.io from design handoff
+# faiqx.github.io — rebuild status
 
-## Decisions (confirmed with Faiq)
-- **Stack:** Astro + TypeScript, static output. Chosen over vanilla because project pages
-  may be embedded later; Astro's static build is a plain folder, so GitHub Pages is not a
-  constraint.
-- **Conflicts:** where the handoff README and `Faiq Allam.dc.html` disagree, the **design
-  file wins** — no contact list rows, footer reads "© 2026 Faiq Allam | Jakarta time, EU hours".
-- **Migration:** wipe the old Vue 2 app on `master`, rebuild fresh. Old site stays in history.
-- **Deploy:** GitHub Actions → Pages (replaces manual `deploy.sh` + committed `docs/`).
+Branch `rebuild-astro-site`, PR #31. **Nothing is deployed yet.**
 
-## Tasks
-- [x] Stash assets to keep (`photo.jpeg`, `favicon.ico`, `resume-en.pdf`)
-- [x] Remove Vue app: `src/`, `docs/`, `public/`, `package.json`, `yarn.lock`,
-      `vue.config.js`, `babel.config.js`, `deploy.sh`
-- [x] Scaffold Astro project (config, tsconfig, package.json, .gitignore)
-- [x] Design tokens as CSS custom properties in `src/styles/global.css`
-- [x] Content as typed data modules (`src/data/`) so markup is not copy-pasted per chapter
-- [x] Components: Header, Chapter (collapsible), Principle, Testimonial, Footer
-- [x] `src/pages/index.astro` composing the page, pixel-matching the design file
-- [x] Chapter collapse/expand: independent state per chapter, title + button triggers,
-      fade overlay, `max-height` transition. Progressive enhancement + a11y attrs.
-- [x] Head: title, meta description, OG/Twitter tags, favicon, google-site-verification
-- [x] Sitemap via `@astrojs/sitemap`, `robots.txt`
-- [x] GitHub Actions workflow deploying to Pages
-- [x] README rewrite
-- [x] Verify: build passes, serve locally, check rendering + toggles in a browser
-- [x] Review section below
+## Stack
 
-## Notes
-- No `CNAME` is tracked in git (old `deploy.sh` generated one for `kaboel.space` but it was
-  never committed), so the site is served at `faiqx.github.io`. `site` is set accordingly.
-- Old Google Analytics snippet used Universal Analytics (`UA-…`), which stopped processing
-  data in 2023. Dropped rather than carried over.
-- Portrait `src` in the design file pointed at a WhatsApp upload path; the bundled
-  `photo.jpeg` (512×512) is the real asset.
+Astro 7 (static), TypeScript, plain CSS. Node 22.12+ (`.nvmrc`).
+`npm run dev` (port 4321) · `npm run build` · `npm run check`.
 
-## Review
+Fonts are self-hosted via Astro's font pipeline: **Hanken Grotesk** (prose) and
+**JetBrains Mono** (labels, meta, years, chips, footer). Two variable files,
+~72 KB, zero third-party requests.
 
-### What changed
-The Vue 2 SPA (Buefy, Flickity, vee-validate, pdfvuer, 24 open dependabot branches) is gone.
-In its place: an Astro static site that builds to a `dist/` folder of plain HTML, one CSS
-file, and ~1 KB of JS. All copy lives in typed modules under `src/data/`, so the timeline,
-principles, and testimonials are data, not repeated markup — adding a chapter is one array
-entry.
+## Content model
 
-### Deviations from the handoff, and why
-- **Astro 7, not 5.** Pinned `^5.2.5` at first out of habit; `npm audit` flagged five
-  advisories against that line. Moved to 7.1.1, which needs Node 22.12+ — hence `.nvmrc`
-  and `engines`. Clean audit.
-- **Favicon replaced.** The old `favicon.ico` was the Kaboel-era logo, off-brand against
-  the monochrome design. Swapped for an SVG dot on `#F5F5F4` echoing the timeline marker.
-- **OG image** is the portrait (`public/og.jpg`), `twitter:card` set to `summary` since
-  it is square rather than 1.91:1.
-- **Google Analytics dropped.** The old snippet was Universal Analytics, which stopped
-  processing data in 2023.
-- **`resume-en.pdf` kept** at the same path so existing links do not 404, though nothing
-  in the new design links to it.
+Three collections related the way SQL tables would be. **The child row holds the
+foreign key, never the parent** — chapters declare nothing about their children,
+which are derived by querying.
 
-### Verification
-Driven in headless Chromium against the production build (`npm run preview`):
-- 0 console errors, 0 page errors, 0 failed requests
-- 0px horizontal overflow at 1280px and at 360px
-- Both webfonts computed as applied; background `rgb(245,245,244)`
-- 4 chapters, all collapsed on load at `max-height: 92px` with fade at `opacity: 1`
-- Toggling chapter 2 leaves chapters 1, 3, 4 closed — state is genuinely independent
-- Title click and button click both toggle; label swaps to "Show less ↑";
-  `aria-expanded` tracks the open state; re-collapse works
-- Anchor nav scrolls
-- JS disabled: `max-height: none` on all four bodies (full text readable), toggle buttons
-  `display: none`
-- `astro check`: 0 errors, 0 warnings, 0 hints
+    chapters(id PK, year, company, shortName, location, title, position, status)
+    case_studies(id PK, chapter_id FK, title, linkLabel, outcome, stack, status)
+    projects(id PK, chapter_id FK, name, url, role, stack, thumbnail, status)
 
-### Left for Faiq
-- **GitHub Pages source must be switched to "GitHub Actions"** in repo settings, or the
-  first workflow run will fail. This is the one manual step.
-- No `CNAME` is committed, so the site serves at `faiqx.github.io`. If `kaboel.space`
-  should still resolve, a `CNAME` file needs adding to `public/`.
-- `sitemap.xml` from the old site pointed at dead `kaboel.kodeskillet.com` URLs; the new
-  one is generated at `/sitemap-index.xml`. Worth resubmitting in Search Console.
+`reference()` validates the keys at build time. Migrating to Postgres later means
+reading the collections and inserting rows; the shape doesn't change.
+
+**`status: draft | published | hidden`**, and visibility **cascades**: hiding the
+NoscAi chapter hides its case studies and projects, stops generating their pages,
+and drops NoscAi from the Person schema's `worksFor`. Drafts render in dev only.
+A project with no `chapter` FK is independent work, attributed to "Personal".
+
+## Conventions worth keeping
+
+- **No em dashes in visible copy.** Deliberate style choice throughout.
+- Chapter copy is Faiq's and moves verbatim. Entities (`&rsquo;`, `&nbsp;`,
+  `&rarr;`) are written literally in markdown and rendered with `set:html`.
+- **Any value containing a colon must be quoted in frontmatter** or the YAML
+  parse fails. Hit this twice.
+- Collapsible regions use `[data-collapsible]` + `.collapsible` and are driven by
+  one shared script. Peeks are expressed in body lines, not pixels.
+- `npm run build` runs `scripts/check-output.mjs`, which **fails the build if any
+  HTML comment reaches a built page**. Markdown passes comments through to the
+  browser, and an editorial note in an anonymised case study is a disclosure
+  risk, not a cosmetic one.
+
+## Outstanding — needs Faiq
+
+1. **`"dive resort"` → `"surf resort"`** in `src/content/chapters/wood-wide-web.md`.
+   Confirmed to be Scar Reef, which is a surf resort; the copy currently
+   contradicts the site it links to. Also fix the framing in
+   `work/idempotent-payment-webhooks.md`.
+2. **Incident case study is a draft** (`work/compromised-wordpress-estate.md`) and
+   needs review. Deliberately anonymised: no client name, domain, mailbox,
+   hosting account, theme slug or table prefix. Attacker-side IOCs are kept.
+   **Do not link it from the Scar Reef project** — that re-identifies.
+   The "about a week" forensics duration is inferred, not known.
+3. **61 confirmed victim POSTs** in that engagement is a personal-data breach.
+   Independent of the site, worth confirming the client has notified.
+4. **Pages source → "GitHub Actions"** in repo settings, or the first deploy fails.
+5. **Testimonial photos**: ask Gerben, Johanna and Spencer before using their
+   LinkedIn headshots. Drop files in `src/assets/people/`, then set `avatar:` on
+   the entry. Without one the initials monogram renders.
+6. Three case-study skeletons are drafts with `TODO:` markers only Faiq can fill:
+   ambient transcription, Sequelize→Prisma, payment webhooks.
+
+## Optional
+
+- `/work/` → `/case-studies/` (free while nothing is deployed; never free again).
+- Off-page SEO matters more than anything left on-page: LinkedIn website field,
+  GitHub profile README pointing at the site.
+- Bali Authentique's summary dropped the Awan back-office detail. Could move to
+  the role line: `Feature development and Awan back-office integration`.
+
+## Decisions already made (don't relitigate)
+
+- Astro over vanilla, because project pages may be embedded later.
+- Design file wins over the handoff README where they conflict.
+- Structured 10-field case-study frontmatter kept over a leaner schema.
+- Testimonials are enclosed cards; **principles stay prose** — boxing them made
+  them read as feature tiles.
+- **Hanken Grotesk stays.** Schibsted Grotesk was trialled across the whole site
+  and reverted: sharper and more newspaper-like, but colder against copy this
+  personal.
+- Mono is kept for labels. A sans-only variant was trialled and not adopted.

@@ -14,7 +14,7 @@ const bodyId = `chapter-body-${index}`;
 const titleId = `chapter-title-${index}`;
 ---
 
-<article class="chapter" data-chapter>
+<article class="chapter" data-chapter data-collapsible>
   <span class="dot" aria-hidden="true"></span>
 
   <div class="meta">
@@ -43,15 +43,23 @@ const titleId = `chapter-title-${index}`;
     </span>
   </div>
 
-  <h3 id={titleId} class="title" data-chapter-title>{title}</h3>
+  <h3 id={titleId} class="title" data-collapsible-title>{title}</h3>
 
-  <div id={bodyId} class="body" data-chapter-body>
+  <div id={bodyId} class="body collapsible" data-collapsible-body>
     <Content />
-    <span class="fade" data-chapter-fade aria-hidden="true"></span>
+    <span class="collapsible-fade" aria-hidden="true"></span>
   </div>
 
-  <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
-    <span data-chapter-label>Read the chapter &darr;</span>
+  <button
+    class="collapsible-toggle toggle"
+    type="button"
+    data-collapsible-toggle
+    data-label-closed="Read the chapter ↓"
+    data-label-open="Show less ↑"
+    aria-expanded="false"
+    aria-controls={bodyId}
+  >
+    <span data-collapsible-label>Read the chapter &darr;</span>
     <span class="sr-only">: {title}</span>
   </button>
 
@@ -70,6 +78,9 @@ const titleId = `chapter-title-${index}`;
 
 <style>
   .chapter {
+    /* Shared by the year type and the dot's vertical centring, so the marker
+       tracks the fluid year size instead of drifting at other viewports. */
+    --year-size: clamp(18px, 3vw, 22px);
     position: relative;
     padding: 0 0 clamp(44px, 7vw, 56px) clamp(26px, 5vw, 40px);
   }
@@ -80,13 +91,16 @@ const titleId = `chapter-title-${index}`;
 
   .dot {
     position: absolute;
-    left: -5px;
-    top: 5px;
+    /* The article's left edge sits 1px right of the timeline rule, so the dot
+       is pulled back an extra half pixel to centre on the rule itself. */
+    left: 0;
+    /* 0.66em is the optical centre of the year's line box in this face. */
+    top: calc(var(--year-size) * 0.66 - 4.5px);
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: var(--ink);
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 0.5px));
     /* Background-coloured ring gaps the timeline line behind the dot. */
     box-shadow: 0 0 0 4px var(--bg);
   }
@@ -101,7 +115,7 @@ const titleId = `chapter-title-${index}`;
 
   .year {
     font-family: var(--mono);
-    font-size: clamp(18px, 3vw, 22px);
+    font-size: var(--year-size);
     font-weight: 500;
     letter-spacing: -0.01em;
   }
@@ -118,6 +132,7 @@ const titleId = `chapter-title-${index}`;
 
   /* Dev-only marker for chapters that won't render in production. */
   .status {
+    font-family: var(--mono);
     margin-left: 8px;
     border: 1px solid var(--border);
     padding: 2px 7px;
@@ -132,17 +147,6 @@ const titleId = `chapter-title-${index}`;
     margin: 0 0 10px;
   }
 
-  .body {
-    /* Body copy is 16px at 1.65, so one line is 26.4px. The collapsed peek is
-       expressed in lines rather than a magic pixel height, so changing either
-       type value keeps the peek exactly this many lines. */
-    --line: calc(16px * 1.65);
-    --peek-lines: 2;
-    position: relative;
-    overflow: hidden;
-    transition: max-height 0.5s ease;
-  }
-
   .body :global(p) {
     font-size: 16px;
     line-height: 1.65;
@@ -155,33 +159,11 @@ const titleId = `chapter-title-${index}`;
     margin-bottom: 0;
   }
 
-  .fade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: calc(var(--line) * 1.25);
-    background: linear-gradient(rgba(245, 245, 244, 0), var(--bg));
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
-  }
-
   /* A disclosure control, not navigation: it belongs to the body text above
-     it, so it stays quiet and sits on its own line. */
+     it, so it stays quiet and sits on its own line. Appearance is shared;
+     only the spacing is local. */
   .toggle {
-    background: none;
-    border: none;
-    border-bottom: 1px solid var(--underline);
-    padding: 0;
     margin-top: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--secondary);
-    cursor: pointer;
-    display: none;
   }
 
   /* Links away from the page. Separated from the toggle and marked with a
@@ -210,45 +192,5 @@ const titleId = `chapter-title-${index}`;
     font-weight: 400;
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 
-  /*
-   * Collapsed state is applied only when JavaScript is available, so a no-JS
-   * visitor gets the full chapter text rather than a permanently clipped one.
-   * The `js` class is set by an inline script before first paint, so there is
-   * no flash of expanded content.
-   */
-  :global(html.js) .title {
-    cursor: pointer;
-  }
-
-  :global(html.js) .body {
-    max-height: calc(var(--line) * var(--peek-lines));
-  }
-
-  :global(html.js) .body.is-open {
-    max-height: 2000px;
-  }
-
-  :global(html.js) .fade {
-    opacity: 1;
-  }
-
-  :global(html.js) .body.is-open .fade {
-    opacity: 0;
-  }
-
-  :global(html.js) .toggle {
-    display: inline-block;
-  }
 </style>

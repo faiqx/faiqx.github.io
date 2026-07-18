@@ -1,11 +1,12 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import { site } from '../../data/site';
+import { getPublishedWork } from '../../data/work';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('work', ({ data }) => !data.draft);
+  const entries = await getPublishedWork();
   return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 

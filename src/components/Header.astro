@@ -4,7 +4,10 @@ import { site } from '../data/site';
 
 <header>
   <div class="bar">
-    <a class="wordmark" href="#top">{site.name}</a>
+    <a class="wordmark" href="/">{site.name}</a>
+    <nav>
+      <a href="/work/">Work</a>
+    </nav>
   </div>
 </header>
 
@@ -23,12 +26,25 @@ import { site } from '../data/site';
     margin: 0 auto;
     padding: 18px var(--gutter);
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 16px;
   }
 
   .wordmark {
     font-family: var(--mono);
     font-size: 14px;
     font-weight: 500;
+  }
+
+  nav {
+    display: flex;
+    gap: clamp(16px, 4vw, 28px);
+    font-size: 14px;
+    color: var(--secondary);
+  }
+
+  nav a {
+    white-space: nowrap;
   }
 </style>

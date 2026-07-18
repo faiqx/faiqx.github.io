@@ -1,0 +1,185 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import { getPublishedWork } from '../../data/work';
+import { site } from '../../data/site';
+
+const entries = await getPublishedWork();
+const title = `Case studies — ${site.name}`;
+const description =
+  'Systems worth explaining in more depth: what made each one hard, what I rejected, and what it cost.';
+---
+
+<Base title={title} description={description}>
+  <Header />
+
+  <main>
+    <section class="intro">
+      <h1>Case studies</h1>
+      <p>
+        A few systems worth explaining in more depth than the timeline allows: what made each one
+        hard, what I chose not to do, and what the approach cost.
+      </p>
+    </section>
+
+    <ol class="list">
+      {
+        entries.map((entry) => (
+          <li>
+            <a href={`/work/${entry.id}/`}>
+              <div class="meta">
+                <span class="year">{entry.data.year}</span>
+                <span class="company">{entry.data.company}</span>
+                {entry.data.draft && <span class="draft">Draft</span>}
+              </div>
+              <h2>{entry.data.title}</h2>
+              <p class="summary">{entry.data.summary}</p>
+              <div class="stack">
+                {entry.data.stack.map((item) => (
+                  <span>{item}</span>
+                ))}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a class="back" href="/">&larr; Back to the story</a>
+
+    <footer class="rule">
+      <span>&copy; 2026 {site.name}</span>
+      <span>Jakarta time, EU hours</span>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .intro {
+    padding: clamp(48px, 9vw, 80px) 0 clamp(32px, 5vw, 44px);
+    max-width: var(--prose);
+  }
+
+  h1 {
+    font-size: clamp(27px, 4.4vw, 38px);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+
+  .intro p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--prose);
+  }
+
+  .list li {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .list a {
+    display: block;
+    padding: clamp(28px, 4vw, 36px) 0;
+  }
+
+  .list a:hover h2 {
+    border-bottom-color: var(--ink);
+  }
+
+  .meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .year {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .draft {
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
+  h2 {
+    font-size: clamp(19px, 2.6vw, 21px);
+    font-weight: 600;
+    margin: 0 0 8px;
+    text-wrap: pretty;
+    display: inline;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .summary {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 8px 0 0;
+    text-wrap: pretty;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .stack span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+  }
+
+  .back {
+    display: inline-block;
+    margin: clamp(40px, 6vw, 56px) 0 clamp(40px, 6vw, 56px);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border-bottom: 1px solid var(--underline);
+  }
+
+  footer {
+    padding: 28px 0 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

@@ -6,10 +6,20 @@ import Chapter from '../components/Chapter.astro';
 import Principle from '../components/Principle.astro';
 import Testimonial from '../components/Testimonial.astro';
 import { chapters } from '../data/chapters';
+import { getPublishedWork } from '../data/work';
 import { principles, stackLine } from '../data/principles';
 import { testimonials } from '../data/testimonials';
 import { site } from '../data/site';
 import portrait from '../assets/photo.jpeg';
+
+// Only link chapters through to case studies that will actually exist in this
+// build, so a draft can never leave a dead link on the front page.
+const published = new Set((await getPublishedWork()).map((entry) => entry.id));
+const linkedChapters = chapters.map((chapter) => ({
+  ...chapter,
+  caseStudies: chapter.caseStudies?.filter(({ slug }) => published.has(slug)),
+}));
+const hasWork = published.size > 0;
 ---
 
 <Base>
@@ -48,8 +58,15 @@ import portrait from '../assets/photo.jpeg';
     <section id="story" class="rule story">
       <h2 class="section-label">The story so far</h2>
       <div class="timeline">
-        {chapters.map((chapter, index) => <Chapter chapter={chapter} index={index} />)}
+        {linkedChapters.map((chapter, index) => <Chapter chapter={chapter} index={index} />)}
       </div>
+      {
+        hasWork && (
+          <a class="all-work" href="/work/">
+            All case studies &rarr;
+          </a>
+        )
+      }
     </section>
 
     <!-- how I work -->
@@ -166,6 +183,18 @@ import portrait from '../assets/photo.jpeg';
   .timeline {
     border-left: 1px solid var(--border);
     margin-left: 5px;
+  }
+
+  .all-work {
+    display: inline-block;
+    margin-top: clamp(32px, 5vw, 44px);
+    margin-left: clamp(31px, 5vw, 45px);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border-bottom: 1px solid var(--underline);
   }
 
   /* how I work */

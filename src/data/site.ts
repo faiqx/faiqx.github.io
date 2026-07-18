@@ -9,9 +9,3 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/faiqx',
   googleSiteVerification: 'PyC0pXe33ZPfpV21Stl6oekQ0As-vXhFma4_ix9VWhs',
 } as const;
-
-export const nav = [
-  { href: '#story', label: 'Story' },
-  { href: '#how', label: 'How I work' },
-  { href: '#contact', label: 'Contact' },
-] as const;

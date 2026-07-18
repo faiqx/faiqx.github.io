@@ -2,8 +2,8 @@
 title: Rebuilding drug-database search as a streaming Go indexer
 summary: Replacing a legacy importer that could not hold 800,000 products in memory.
 description: How I replaced a memory-bound drug-database importer with a streaming Go indexer and an on-disk join, cutting its memory footprint roughly six-fold.
-company: NoscAi
-companyUrl: https://nosc.ai
+chapter: noscai
+linkLabel: How the indexer works
 year: '2025'
 date: 2025-06-01
 outcome: Roughly six-fold reduction in memory footprint, with correctness preserved across the full 800,000-product catalogue.
@@ -11,7 +11,7 @@ stack:
   - Go
   - PostgreSQL
   - On-disk join
-draft: false
+status: published
 ---
 
 <!--

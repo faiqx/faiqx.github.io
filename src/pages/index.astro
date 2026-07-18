@@ -5,21 +5,16 @@ import Header from '../components/Header.astro';
 import Chapter from '../components/Chapter.astro';
 import Principle from '../components/Principle.astro';
 import Testimonial from '../components/Testimonial.astro';
-import { chapters } from '../data/chapters';
-import { getPublishedWork } from '../data/work';
+import { getTimeline } from '../data/content';
 import { principles, stackLine } from '../data/principles';
 import { testimonials } from '../data/testimonials';
 import { site } from '../data/site';
 import portrait from '../assets/photo.jpeg';
 
-// Only link chapters through to case studies that will actually exist in this
-// build, so a draft can never leave a dead link on the front page.
-const published = new Set((await getPublishedWork()).map((entry) => entry.id));
-const linkedChapters = chapters.map((chapter) => ({
-  ...chapter,
-  caseStudies: chapter.caseStudies?.filter(({ slug }) => published.has(slug)),
-}));
-const hasWork = published.size > 0;
+// Chapters with their case studies attached, derived from the foreign keys.
+// Visibility cascades, so a hidden chapter takes its children with it.
+const timeline = await getTimeline();
+const hasWork = timeline.some((row) => row.caseStudies.length > 0);
 ---
 
 <Base>
@@ -58,7 +53,11 @@ const hasWork = published.size > 0;
     <section id="story" class="rule story">
       <h2 class="section-label">The story so far</h2>
       <div class="timeline">
-        {linkedChapters.map((chapter, index) => <Chapter chapter={chapter} index={index} />)}
+        {
+          timeline.map((row, index) => (
+            <Chapter chapter={row.chapter} caseStudies={row.caseStudies} index={index} />
+          ))
+        }
       </div>
       {
         hasWork && (

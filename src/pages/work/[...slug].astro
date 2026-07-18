@@ -3,16 +3,21 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import { site } from '../../data/site';
-import { getPublishedWork } from '../../data/work';
+import { getCaseStudies } from '../../data/content';
+import { getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-  const entries = await getPublishedWork();
+  const entries = await getCaseStudies();
   return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, summary, description, company, companyUrl, year, outcome, stack } = entry.data;
+const { title, summary, description, year, outcome, stack } = entry.data;
+// Resolve the chapter FK for the company attribution.
+const chapter = await getEntry(entry.data.chapter);
+const company = chapter?.data.company ?? chapter?.data.location ?? '';
+const companyUrl = chapter?.data.companyUrl;
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -37,11 +42,15 @@ const articleSchema = {
         <span class="where">
           {
             companyUrl ? (
-              <a class="company" href={companyUrl} target="_blank" rel="noopener noreferrer">
-                {company}
-              </a>
+              <a
+                class="company"
+                href={companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                set:html={company}
+              />
             ) : (
-              company
+              <span set:html={company} />
             )
           }
         </span>

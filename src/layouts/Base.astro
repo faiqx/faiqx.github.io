@@ -1,7 +1,8 @@
 ---
 import { Font } from 'astro:assets';
 import { site } from '../data/site';
-import { personSchema } from '../data/schema';
+import { buildPersonSchema } from '../data/schema';
+import { getChapters } from '../data/content';
 import '../styles/global.css';
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 const { title = site.title, description = site.description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
+// Derived from visible chapters, so hiding one also drops its employment claim.
+const personSchema = buildPersonSchema(await getChapters());
 ---
 
 <!doctype html>

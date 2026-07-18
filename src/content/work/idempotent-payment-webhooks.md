@@ -2,8 +2,7 @@
 title: Taking money over an untrusted callback
 summary: A booking-and-payments engine where replays and races are the expected case.
 description: Building a dive-resort booking and payments engine with idempotent, spoof-resistant webhooks and a USD-priced, IDR-charged currency model.
-company: Wood Wide Web
-companyUrl: https://www.woodwideweb.com
+chapter: wood-wide-web
 year: '2025'
 date: 2025-02-01
 outcome: 'Every payment path assumes a hostile environment: replays and races are handled as the expected case, not the edge case.'
@@ -12,7 +11,7 @@ stack:
   - Node.js
   - PostgreSQL
   - Payment gateway
-draft: true
+status: draft
 ---
 
 <!-- SKELETON. Structure only. All prose is Faiq's to write. -->

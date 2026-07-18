@@ -9,6 +9,7 @@ stack:
   - PHP
   - JavaScript
 thumbnail: ../../assets/projects/baliauthentique.jpg
+chapter: wood-wide-web
 date: 2025-05-01
-draft: false
+status: published
 ---

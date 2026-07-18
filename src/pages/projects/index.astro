@@ -2,12 +2,12 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
-import { getPublishedProjects, getPublishedWork } from '../../data/work';
+import { getProjects, getVisibleCaseStudyIds } from '../../data/content';
 import { site } from '../../data/site';
 
-const entries = await getPublishedProjects();
+const entries = await getProjects();
 // Only cross-link case studies that will actually exist in this build.
-const publishedWork = new Set((await getPublishedWork()).map((entry) => entry.id));
+const publishedWork = await getVisibleCaseStudyIds();
 const title = `Projects — ${site.name}`;
 const description = 'Public sites I have designed and shipped.';
 ---
@@ -40,7 +40,7 @@ const description = 'Public sites I have designed and shipped.';
                 <div class="meta">
                   <span class="year">{entry.data.year}</span>
                   <span class="role">{entry.data.role}</span>
-                  {entry.data.draft && <span class="draft">Draft</span>}
+                  {entry.data.status !== 'published' && <span class="draft">{entry.data.status}</span>}
                 </div>
                 <h2>{entry.data.name} &nearr;</h2>
                 <p class="summary">{entry.data.summary}</p>
@@ -52,8 +52,8 @@ const description = 'Public sites I have designed and shipped.';
               </div>
             </a>
             {
-              entry.data.caseStudy && publishedWork.has(entry.data.caseStudy) && (
-                <a class="case-study" href={`/work/${entry.data.caseStudy}/`}>
+              entry.data.caseStudy && publishedWork.has(entry.data.caseStudy.id) && (
+                <a class="case-study" href={`/work/${entry.data.caseStudy.id}/`}>
                   Read the case study &rarr;
                 </a>
               )

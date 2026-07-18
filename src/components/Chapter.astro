@@ -1,12 +1,15 @@
 ---
-import type { Chapter } from '../data/chapters';
+import { render, type CollectionEntry } from 'astro:content';
 
 interface Props {
-  chapter: Chapter;
+  chapter: CollectionEntry<'chapters'>;
+  caseStudies: CollectionEntry<'work'>[];
   index: number;
 }
 
-const { chapter, index } = Astro.props;
+const { chapter, caseStudies, index } = Astro.props;
+const { Content } = await render(chapter);
+const { year, company, companyUrl, location, title, status } = chapter.data;
 const bodyId = `chapter-body-${index}`;
 const titleId = `chapter-title-${index}`;
 ---
@@ -15,42 +18,47 @@ const titleId = `chapter-title-${index}`;
   <span class="dot" aria-hidden="true"></span>
 
   <div class="meta">
-    <span class="year">{chapter.year}</span>
+    <span class="year">{year}</span>
     <span class="where">
       {
-        chapter.company && (
+        company && (
           <>
-            <a
-              class="company"
-              href={chapter.company.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              set:html={chapter.company.name}
-            />
+            {companyUrl ? (
+              <a
+                class="company"
+                href={companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                set:html={company}
+              />
+            ) : (
+              <span set:html={company} />
+            )}
             {' · '}
           </>
         )
       }
-      {chapter.location}
+      {location}
+      {status !== 'published' && <span class="status">{status}</span>}
     </span>
   </div>
 
-  <h3 id={titleId} class="title" data-chapter-title>{chapter.title}</h3>
+  <h3 id={titleId} class="title" data-chapter-title>{title}</h3>
 
   <div id={bodyId} class="body" data-chapter-body>
-    {chapter.paragraphs.map((p) => <p set:html={p} />)}
+    <Content />
     <span class="fade" data-chapter-fade aria-hidden="true"></span>
   </div>
 
   <div class="actions">
     <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
       <span data-chapter-label>Read the chapter &darr;</span>
-      <span class="sr-only">: {chapter.title}</span>
+      <span class="sr-only">: {title}</span>
     </button>
     {
-      chapter.caseStudies?.map(({ slug, label }) => (
-        <a class="case-study" href={`/work/${slug}/`}>
-          {label} &rarr;
+      caseStudies.map((entry) => (
+        <a class="case-study" href={`/work/${entry.id}/`}>
+          {entry.data.linkLabel} &rarr;
         </a>
       ))
     }
@@ -105,6 +113,16 @@ const titleId = `chapter-title-${index}`;
     border-bottom: 1px solid var(--border);
   }
 
+  /* Dev-only marker for chapters that won't render in production. */
+  .status {
+    margin-left: 8px;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
   .title {
     font-size: clamp(19px, 2.6vw, 21px);
     font-weight: 600;
@@ -117,7 +135,7 @@ const titleId = `chapter-title-${index}`;
     transition: max-height 0.5s ease;
   }
 
-  .body p {
+  .body :global(p) {
     font-size: 16px;
     line-height: 1.65;
     color: var(--body);
@@ -125,7 +143,7 @@ const titleId = `chapter-title-${index}`;
     text-wrap: pretty;
   }
 
-  .body p:last-of-type {
+  .body :global(p:last-of-type) {
     margin-bottom: 0;
   }
 

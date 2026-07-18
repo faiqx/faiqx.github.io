@@ -1,10 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
-import { getPublishedWork } from '../../data/work';
+import { getCaseStudies, getChapters } from '../../data/content';
 import { site } from '../../data/site';
 
-const entries = await getPublishedWork();
+const entries = await getCaseStudies();
+// Resolve the chapter FK so each row shows the company, not the raw slug.
+const chapters = new Map((await getChapters()).map((c) => [c.id, c.data]));
 const title = `Case studies — ${site.name}`;
 const description =
   'Systems worth explaining in more depth: what made each one hard, what I rejected, and what it cost.';
@@ -29,8 +31,8 @@ const description =
             <a href={`/work/${entry.id}/`}>
               <div class="meta">
                 <span class="year">{entry.data.year}</span>
-                <span class="company">{entry.data.company}</span>
-                {entry.data.draft && <span class="draft">Draft</span>}
+                <span class="company" set:html={chapters.get(entry.data.chapter.id)?.company ?? ''} />
+                {entry.data.status !== 'published' && <span class="draft">{entry.data.status}</span>}
               </div>
               <h2>{entry.data.title}</h2>
               <p class="summary">{entry.data.summary}</p>

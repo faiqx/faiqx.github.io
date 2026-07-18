@@ -2,8 +2,7 @@
 title: Migrating an ORM model by model with zero downtime
 summary: Moving a travel-agency back-office off an aging Sequelize setup onto type-safe Prisma and GraphQL.
 description: How I ran a model-by-model ORM migration with no downtime, then drove a 48% error rate on a core endpoint down to a fraction of a percent.
-company: Wood Wide Web
-companyUrl: https://www.woodwideweb.com
+chapter: wood-wide-web
 year: '2025'
 date: 2025-04-01
 outcome: A 48% error rate on a core endpoint reduced to a fraction of a percent, with no downtime during the migration.
@@ -12,7 +11,7 @@ stack:
   - Prisma
   - GraphQL
   - PostgreSQL
-draft: true
+status: draft
 ---
 
 <!-- SKELETON. Structure only. All prose is Faiq's to write. -->

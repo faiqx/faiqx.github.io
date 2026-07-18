@@ -10,8 +10,9 @@ stack:
   - JavaScript
   - Channel manager
   - Payments
+chapter: wood-wide-web
 caseStudy: idempotent-payment-webhooks
 thumbnail: ../../assets/projects/scarreefresort.jpg
 date: 2025-03-01
-draft: false
+status: published
 ---

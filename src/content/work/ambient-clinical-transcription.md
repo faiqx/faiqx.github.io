@@ -2,8 +2,7 @@
 title: Making ambient clinical transcription survive a dropped connection
 summary: Three architecture generations until recording stopped losing audio.
 description: How I rebuilt an ambient clinical transcription system until the backend was completely stateless for recording, so network blips stopped costing consultations.
-company: NoscAi
-companyUrl: https://nosc.ai
+chapter: noscai
 year: '2025'
 date: 2025-09-01
 outcome: Dropped connections, network blips, and refreshes no longer lose audio.
@@ -11,7 +10,7 @@ stack:
   - TypeScript
   - Node.js
   - Audio streaming
-draft: true
+status: draft
 ---
 
 <!-- SKELETON. Structure only. All prose is Faiq's to write. -->

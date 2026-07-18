@@ -1,9 +1,9 @@
 ---
 import { site } from '../data/site';
-import { getPublishedWork, getPublishedProjects } from '../data/work';
+import { getCaseStudies, getProjects } from '../data/content';
 
 // Sections only appear in the nav once they have something in them.
-const [work, projects] = await Promise.all([getPublishedWork(), getPublishedProjects()]);
+const [work, projects] = await Promise.all([getCaseStudies(), getProjects()]);
 const links = [
   work.length > 0 && { href: '/work/', label: 'Work' },
   projects.length > 0 && { href: '/projects/', label: 'Projects' },

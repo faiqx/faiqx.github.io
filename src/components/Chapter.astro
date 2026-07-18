@@ -42,10 +42,19 @@ const titleId = `chapter-title-${index}`;
     <span class="fade" data-chapter-fade aria-hidden="true"></span>
   </div>
 
-  <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
-    <span data-chapter-label>Read the chapter &darr;</span>
-    <span class="sr-only">: {chapter.title}</span>
-  </button>
+  <div class="actions">
+    <button class="toggle" type="button" data-chapter-toggle aria-expanded="false" aria-controls={bodyId}>
+      <span data-chapter-label>Read the chapter &darr;</span>
+      <span class="sr-only">: {chapter.title}</span>
+    </button>
+    {
+      chapter.caseStudies?.map(({ slug, label }) => (
+        <a class="case-study" href={`/work/${slug}/`}>
+          {label} &rarr;
+        </a>
+      ))
+    }
+  </div>
 </article>
 
 <style>
@@ -132,19 +141,36 @@ const titleId = `chapter-title-${index}`;
     pointer-events: none;
   }
 
-  .toggle {
-    background: none;
-    border: none;
-    padding: 0;
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px clamp(16px, 3vw, 24px);
     margin-top: 14px;
+  }
+
+  .toggle,
+  .case-study {
     font-family: var(--mono);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--secondary);
-    cursor: pointer;
     border-bottom: 1px solid var(--underline);
+  }
+
+  .toggle {
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding: 0;
+    cursor: pointer;
     display: none;
+  }
+
+  .case-study {
+    color: var(--ink);
   }
 
   .sr-only {

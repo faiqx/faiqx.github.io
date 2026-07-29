@@ -1,0 +1,37 @@
+---
+import type { Principle } from '../data/principles';
+
+interface Props {
+  principle: Principle;
+}
+
+const { principle } = Astro.props;
+---
+
+<div>
+  {/* h3, not h4: the section label above is the h2, so anything deeper
+      skips a level and breaks the document outline. */}
+  <h3>{principle.title}</h3>
+  <p set:html={principle.body} />
+</div>
+
+<style>
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    /* Titles are kept short enough to hold one line at the two-column width,
+       which keeps bodies aligned across a row without reserving a second line
+       and stranding the single-line titles away from their paragraphs. */
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+</style>

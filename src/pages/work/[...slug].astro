@@ -1,0 +1,225 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { site } from '../../data/site';
+import { getCaseStudies } from '../../data/content';
+import { getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCaseStudies();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, summary, description, year, outcome, stack } = entry.data;
+// Resolve the chapter FK for the company attribution.
+const chapter = await getEntry(entry.data.chapter);
+const company = chapter?.data.company ?? chapter?.data.location ?? '';
+const companyUrl = chapter?.data.companyUrl;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description: description ?? summary,
+  author: { '@id': `${site.url}/#person` },
+  publisher: { '@id': `${site.url}/#person` },
+  datePublished: entry.data.date.toISOString().slice(0, 10),
+  about: stack,
+  url: new URL(`/work/${entry.id}/`, site.url).href,
+};
+---
+
+<Base title={`${title} — ${site.name}`} description={description ?? summary}>
+  <Header />
+
+  <main>
+    <article>
+      <div class="meta">
+        <span class="year">{year}</span>
+        <span class="where">
+          {
+            companyUrl ? (
+              <a
+                class="company"
+                href={companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                set:html={company}
+              />
+            ) : (
+              <span set:html={company} />
+            )
+          }
+        </span>
+      </div>
+
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+
+      <div class="stack">
+        {stack.map((item) => <span>{item}</span>)}
+      </div>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="outcome">
+        <div class="section-label">Outcome</div>
+        <p>{outcome}</p>
+      </div>
+    </article>
+
+    <a class="back" href="/#story">&larr; Back to the story</a>
+
+    <Footer />
+  </main>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(articleSchema)} />
+</Base>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  article {
+    padding-top: clamp(48px, 9vw, 80px);
+    max-width: var(--prose);
+  }
+
+  .meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .year {
+    font-family: var(--mono);
+    font-size: clamp(18px, 3vw, 22px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .where {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .company {
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: clamp(27px, 4.4vw, 38px);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+
+  .summary {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0 0 clamp(24px, 4vw, 32px);
+    text-wrap: pretty;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: clamp(32px, 5vw, 44px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .stack span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+  }
+
+  /* Markdown body */
+  .prose {
+    padding-top: clamp(32px, 5vw, 44px);
+  }
+
+  .prose :global(h2) {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: clamp(40px, 6vw, 52px) 0 16px;
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(p) {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0 0 16px;
+    text-wrap: pretty;
+  }
+
+  .prose :global(a) {
+    color: var(--ink);
+    font-weight: 500;
+    border-bottom: 1px solid var(--underline);
+  }
+
+  .prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: var(--code-bg);
+    padding: 1px 5px;
+  }
+
+  .outcome {
+    margin-top: clamp(40px, 6vw, 56px);
+    padding-top: clamp(24px, 4vw, 32px);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .outcome .section-label {
+    margin-bottom: 12px;
+  }
+
+  .outcome p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.6;
+    font-weight: 500;
+    margin: 0;
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+
+  .back {
+    display: inline-block;
+    margin: clamp(48px, 7vw, 64px) 0 clamp(40px, 6vw, 56px);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border-bottom: 1px solid var(--underline);
+  }
+
+</style>

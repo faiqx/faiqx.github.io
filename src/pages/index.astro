@@ -1,0 +1,282 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Chapter from '../components/Chapter.astro';
+import Principle from '../components/Principle.astro';
+import Testimonial from '../components/Testimonial.astro';
+import { getTimeline } from '../data/content';
+import { principles, stackLine } from '../data/principles';
+import { testimonials } from '../data/testimonials';
+import { site } from '../data/site';
+import portrait from '../assets/photo.jpeg';
+
+// Chapters with their case studies attached, derived from the foreign keys.
+// Visibility cascades, so a hidden chapter takes its children with it.
+const timeline = await getTimeline();
+---
+
+<Base>
+  <Header />
+
+  <main id="top">
+    {/* opening */}
+    <section class="opening">
+      <div class="kicker">{site.role} · 7 years in · Jakarta time, EU hours</div>
+      <h1>
+        For seven years I&rsquo;ve been the engineer teams reach for when the system simply has
+        to&nbsp;work.
+      </h1>
+    </section>
+
+    {/* intro + portrait */}
+    <section class="intro">
+      <Image
+        class="portrait"
+        src={portrait}
+        alt={`Portrait of ${site.name}`}
+        widths={[150, 300]}
+        sizes="clamp(120px, 26vw, 150px)"
+        loading="eager"
+      />
+      <p>
+        I build and scale SaaS platforms across healthcare, AI, and workforce management, mostly
+        for international startups, and mostly for products the public never sees but that
+        thousands of people depend on every day. I care about the quiet parts: the data model that
+        holds, the migration that doesn&rsquo;t wake anyone at 3am, the test suite that catches the
+        bug before a user does.
+      </p>
+    </section>
+
+    {/* the story so far */}
+    <section id="story" class="rule story">
+      <h2 class="section-label">The story so far</h2>
+      <div class="timeline">
+        {
+          timeline.map((row, index) => (
+            <Chapter chapter={row.chapter} caseStudies={row.caseStudies} index={index} />
+          ))
+        }
+      </div>
+    </section>
+
+    {/* how I work */}
+    <section id="how" class="rule how">
+      <h2 class="section-label">How I work</h2>
+      <div class="principles">
+        {principles.map((principle) => <Principle principle={principle} />)}
+      </div>
+      <p class="stack">{stackLine}</p>
+    </section>
+
+    {/* in others' words */}
+    <section id="words" class="rule words" data-collapsible>
+      <h2 class="section-label">In others&rsquo; words</h2>
+      <div id="testimonials" class="quotes collapsible" data-collapsible-body>
+        {testimonials.map((testimonial) => <Testimonial testimonial={testimonial} />)}
+        <span class="collapsible-fade" aria-hidden="true" />
+      </div>
+      <button
+        class="collapsible-toggle"
+        type="button"
+        data-collapsible-toggle
+        data-label-closed="See more ↓"
+        data-label-open="See less ↑"
+        aria-expanded="false"
+        aria-controls="testimonials"
+      >
+        <span data-collapsible-label>See more &darr;</span>
+        <span class="sr-only">testimonials</span>
+      </button>
+    </section>
+
+    {/* closing / contact */}
+    <section id="contact" class="rule contact">
+      <p class="statement">
+        Now I&rsquo;m looking for the next hard system worth owning. Ideally one where reliability
+        is a feature, not an afterthought.
+      </p>
+      <p class="signoff">
+        If that sounds like something you&rsquo;re building, write to me at <a
+          href={`mailto:${site.email}`}>{site.email}</a
+        >. Or find me on <a href={site.linkedin} target="_blank" rel="noopener noreferrer"
+          >LinkedIn</a
+        >.
+      </p>
+    </section>
+
+    <Footer />
+  </main>
+</Base>
+
+<script>
+  import '../scripts/collapsible';
+</script>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* opening */
+  .opening {
+    padding: clamp(64px, 11vw, 104px) 0 clamp(44px, 7vw, 64px);
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: clamp(26px, 5vw, 36px);
+  }
+
+  h1 {
+    font-size: clamp(31px, 5.6vw, 48px);
+    line-height: 1.16;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* intro + portrait */
+  .intro {
+    padding-bottom: clamp(56px, 9vw, 80px);
+    display: flex;
+    gap: clamp(24px, 5vw, 40px);
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .intro :global(.portrait) {
+    width: clamp(120px, 26vw, 150px);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    flex: 0 0 auto;
+    filter: grayscale(0.25);
+    border: 1px solid var(--border);
+  }
+
+  .intro p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    flex: 1 1 340px;
+    text-wrap: pretty;
+  }
+
+  /* story */
+  /* Bottom padding matches the other sections. Without it the section's edge
+     is the timeline's own last chapter padding, so the rail runs straight
+     into the divider and terminates against it 5px in from the rule's end,
+     which reads as a broken corner rather than a deliberate join. */
+  .story {
+    padding-top: var(--section-pad);
+    padding-bottom: var(--section-pad);
+  }
+
+  .story .section-label {
+    margin-bottom: clamp(40px, 7vw, 56px);
+  }
+
+  .timeline {
+    border-left: 1px solid var(--border);
+    margin-left: 5px;
+  }
+
+  /* how I work */
+  .how,
+  .words {
+    padding: var(--section-pad) 0;
+  }
+
+  .how .section-label,
+  .words .section-label {
+    margin-bottom: clamp(28px, 5vw, 40px);
+  }
+
+  /* Two columns rather than one long stack. Four heading-and-paragraph pairs
+     at identical weight read as a wall in a single narrow column, and this is
+     the only section on the page without its own structure. */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(28px, 4vw, 36px) clamp(32px, 5vw, 48px);
+  }
+
+  @media (max-width: 620px) {
+    .principles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* Lifted off --muted so it does not read as the fine print of the section
+     above. Deliberately no rule above it: rules divide sections on this page,
+     so one here would strand the line between two dividers and make it look
+     like a section of its own. Contrast and space do the work instead. */
+  .stack {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--secondary);
+    max-width: var(--prose);
+    margin: clamp(32px, 5vw, 44px) 0 0;
+  }
+
+  /* testimonials */
+  .quotes {
+    /* The attribution and quote mark occupy the first ~95px of the card, so
+       the peek has to clear those before any words show. 5.75 body lines lands
+       partway through the second line of the quote, which is what makes it
+       read as continuing rather than as a cropped header. */
+    --peek-lines: 5.75;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 2vw, 16px);
+    max-width: var(--prose);
+  }
+
+  .words .collapsible-toggle {
+    margin-top: clamp(18px, 3vw, 24px);
+  }
+
+  /* closing / contact */
+  .contact {
+    padding: clamp(56px, 9vw, 80px) 0 clamp(40px, 6vw, 56px);
+  }
+
+  .statement {
+    font-size: clamp(21px, 3.3vw, 26px);
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 clamp(24px, 4vw, 32px);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+
+  .signoff {
+    font-size: clamp(16px, 2.3vw, 18px);
+    line-height: 1.7;
+    color: var(--body);
+    margin: 0 0 clamp(28px, 5vw, 36px);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+
+  .signoff a {
+    color: var(--ink);
+    font-weight: 500;
+    border-bottom: 1px solid var(--underline);
+  }
+
+  /* footer */
+</style>

@@ -1,0 +1,198 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  chapter: CollectionEntry<'chapters'>;
+  caseStudies: CollectionEntry<'work'>[];
+  index: number;
+}
+
+const { chapter, caseStudies, index } = Astro.props;
+const { Content } = await render(chapter);
+const { year, company, companyUrl, location, title, status } = chapter.data;
+const bodyId = `chapter-body-${index}`;
+const titleId = `chapter-title-${index}`;
+---
+
+<article class="chapter" data-chapter data-collapsible>
+  <span class="dot" aria-hidden="true"></span>
+
+  <div class="meta">
+    <span class="year">{year}</span>
+    <span class="where">
+      {
+        company && (
+          <>
+            {companyUrl ? (
+              <a
+                class="company"
+                href={companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                set:html={company}
+              />
+            ) : (
+              <span set:html={company} />
+            )}
+            {' · '}
+          </>
+        )
+      }
+      {location}
+      {status !== 'published' && <span class="status">{status}</span>}
+    </span>
+  </div>
+
+  <h3 id={titleId} class="title" data-collapsible-title>{title}</h3>
+
+  <div id={bodyId} class="body collapsible" data-collapsible-body>
+    <Content />
+    <span class="collapsible-fade" aria-hidden="true"></span>
+  </div>
+
+  <button
+    class="collapsible-toggle toggle"
+    type="button"
+    data-collapsible-toggle
+    data-label-closed="Read the chapter ↓"
+    data-label-open="Show less ↑"
+    aria-expanded="false"
+    aria-controls={bodyId}
+  >
+    <span data-collapsible-label>Read the chapter &darr;</span>
+    <span class="sr-only">: {title}</span>
+  </button>
+
+  {
+    caseStudies.length > 0 && (
+      <ul class="related">
+        {caseStudies.map((entry) => (
+          <li>
+            <a href={`/work/${entry.id}/`}>{entry.data.linkLabel}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .chapter {
+    /* Shared by the year type and the dot's vertical centring, so the marker
+       tracks the fluid year size instead of drifting at other viewports. */
+    --year-size: clamp(18px, 3vw, 22px);
+    position: relative;
+    padding: 0 0 clamp(44px, 7vw, 56px) clamp(26px, 5vw, 40px);
+  }
+
+  /* No :last-child override here on purpose. Collapsing the final chapter's
+     padding stops the timeline rule a few pixels under its content while
+     every other chapter carries ~50px, which reads as the line being cut
+     short. Uniform padding keeps the rhythm even down the whole column. */
+
+  .dot {
+    position: absolute;
+    /* The article's left edge sits 1px right of the timeline rule, so the dot
+       is pulled back an extra half pixel to centre on the rule itself. */
+    left: 0;
+    /* 0.66em is the optical centre of the year's line box in this face. */
+    top: calc(var(--year-size) * 0.66 - 4.5px);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translateX(calc(-50% - 0.5px));
+    /* Background-coloured ring gaps the timeline line behind the dot. */
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+
+  .meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .year {
+    font-family: var(--mono);
+    font-size: var(--year-size);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .where {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .company {
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Dev-only marker for chapters that won't render in production. */
+  .status {
+    font-family: var(--mono);
+    margin-left: 8px;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
+  .title {
+    font-size: clamp(19px, 2.6vw, 21px);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  .body :global(p) {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+
+  .body :global(p:last-of-type) {
+    margin-bottom: 0;
+  }
+
+  /* A disclosure control, not navigation: it belongs to the body text above
+     it, so it stays quiet and sits on its own line. Appearance is shared;
+     only the spacing is local. */
+  .toggle {
+    margin-top: 14px;
+  }
+
+  /* Links away from the page. Set apart from the toggle by space alone: a
+     rule here would be identical to the section dividers, so a separator
+     inside a chapter would look the same as one between sections. The gap is
+     wider than the body-to-toggle gap, which is what does the grouping. */
+  .related {
+    list-style: none;
+    margin: clamp(18px, 2.8vw, 24px) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px clamp(18px, 3vw, 28px);
+  }
+
+  .related a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    border-bottom: 1px solid var(--underline);
+  }
+
+  .related a::after {
+    content: ' →';
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+
+</style>

@@ -1,60 +1,24 @@
 {
-  "name": "v-kaboel",
-  "version": "0.1.0",
+  "name": "faiqx.github.io",
+  "type": "module",
+  "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "astro dev",
+    "build": "astro build && node scripts/check-output.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "check:output": "node scripts/check-output.mjs"
   },
   "dependencies": {
-    "@babel/runtime": "^7.4.5",
-    "@fortawesome/fontawesome-svg-core": "^1.2.18",
-    "@fortawesome/free-brands-svg-icons": "^5.8.2",
-    "@fortawesome/free-regular-svg-icons": "^5.8.2",
-    "@fortawesome/free-solid-svg-icons": "^5.8.2",
-    "@fortawesome/vue-fontawesome": "^0.1.6",
-    "axios": "^0.19.0",
-    "buefy": "^0.7.7",
-    "bulma-divider": "^0.2.0",
-    "core-js": "^2.6.5",
-    "flickity": "^2.2.0",
-    "pdfvuer": "^1.3.0",
-    "vee-validate": "^2.2.10",
-    "vue": "^2.6.10",
-    "vue-flickity": "^1.1.2",
-    "vue-router": "^3.0.3"
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.8.0",
-    "@vue/cli-plugin-eslint": "^3.8.0",
-    "@vue/cli-service": "^3.8.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.6.10"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "rules": {},
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.7.3"
+  }
 }

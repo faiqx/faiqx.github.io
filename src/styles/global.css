@@ -1,0 +1,205 @@
+/* Design tokens — true-neutral monochrome, deliberately not warm/cream.
+   Every colour resolves through these, which is what makes a second palette
+   a redefinition rather than a refactor.
+
+   Each is `light-dark(light, dark)`, resolved against the root's
+   `color-scheme`. That means system preference works with no JavaScript at
+   all; the toggle only has to override `color-scheme`, and no value is
+   written twice. */
+:root {
+  color-scheme: light dark;
+
+  --bg: light-dark(#f5f5f4, #131314);
+  --ink: light-dark(#18181a, #ececeb);
+  --body: light-dark(#48484a, #b4b4b2);
+  --secondary: light-dark(#5e5e60, #a0a09e);
+  --muted: light-dark(#8e8e90, #86868a);
+  --hairline: light-dark(#e7e7e6, #262628);
+  --border: light-dark(#dbdbda, #333336);
+  --underline: light-dark(#cfcfce, #46464a);
+  --code-bg: light-dark(#ededec, #1f1f21);
+
+  /* Same hue as --bg at zero alpha. Spelled out rather than `transparent`,
+     which some engines interpolate through transparent-black and band. */
+  --bg-fade: light-dark(rgba(245, 245, 244, 0), rgba(19, 19, 20, 0));
+  --bg-blur: light-dark(rgba(245, 245, 244, 0.86), rgba(19, 19, 20, 0.86));
+
+  /* Set by Astro's font pipeline (see `fonts` in astro.config.mjs), which
+     appends metric-matched fallbacks to each stack. */
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+
+  --measure: 760px;
+  --prose: 620px;
+  --gutter: clamp(22px, 5vw, 40px);
+  --section-pad: clamp(48px, 8vw, 64px);
+}
+
+/* An explicit choice pins the scheme, which re-resolves every light-dark()
+   above. Stamped on <html> before first paint by the script in Base.astro. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* light-dark() takes colours only, so this scalar is set the long way.
+   Screenshots already read as dim against a dark page; desaturating them
+   further makes them look disabled. */
+:root {
+  --thumb-grayscale: 0.25;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --thumb-grayscale: 0.1;
+  }
+}
+
+:root[data-theme='dark'] {
+  --thumb-grayscale: 0.1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Shared section furniture */
+/* Rendered as <h2> for a correct document outline; the margin and weight
+   resets keep it looking exactly like the label it reads as. */
+.section-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+.rule {
+  border-top: 1px solid var(--hairline);
+}
+
+/* ---------------------------------------------------------------------------
+ * Collapsible bodies
+ *
+ * Used by timeline chapters and project summaries: content of varying length
+ * collapses to a fixed number of lines so rows line up, with a fade over the
+ * clipped edge.
+ *
+ * The peek is expressed in lines rather than a pixel height, so changing the
+ * type keeps it a whole number of lines. Collapsing only happens when
+ * JavaScript is available (`html.js`, set before first paint), so without it
+ * the full text is readable and the toggle is hidden.
+ * ------------------------------------------------------------------------ */
+.collapsible {
+  --line: calc(16px * 1.65);
+  --peek-lines: 2;
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.collapsible-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--line) * 1.25);
+  background: linear-gradient(var(--bg-fade), var(--bg));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.collapsible-toggle {
+  display: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--underline);
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  cursor: pointer;
+}
+
+html.js .collapsible {
+  max-height: calc(var(--line) * var(--peek-lines));
+}
+
+html.js .collapsible.is-open {
+  max-height: 2000px;
+}
+
+/* Fade and toggle appear only once the script confirms the content is
+   actually clipped, so short copy gets neither. */
+html.js .is-clamped .collapsible-fade {
+  opacity: 1;
+}
+
+html.js .collapsible.is-open .collapsible-fade {
+  opacity: 0;
+}
+
+html.js .is-clamped .collapsible-toggle {
+  display: inline-block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

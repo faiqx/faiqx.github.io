@@ -1,0 +1,264 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getProjects, getChapters } from '../../data/content';
+import { site } from '../../data/site';
+
+const entries = await getProjects();
+// Attribution comes from the chapter FK. Projects without one are independent
+// work, attributed to "Personal".
+const chapters = new Map((await getChapters()).map((c) => [c.id, c.data]));
+const attribution = (chapterId?: string) => {
+  if (!chapterId) return 'Personal';
+  const chapter = chapters.get(chapterId);
+  return chapter?.shortName ?? chapter?.company ?? 'Personal';
+};
+const title = `Projects — ${site.name}`;
+const description = 'Things I have built that are live and public.';
+---
+
+<Base title={title} description={description}>
+  <Header />
+
+  <main>
+    <section class="intro">
+      <h1>Projects</h1>
+      <p>Things I have built that are live and public.</p>
+      <p class="caveat">
+        I still maintain some of these. Others I handed over years ago and may have changed, gone
+        unmaintained, or become unreachable since.
+      </p>
+    </section>
+
+    <ol class="list">
+      {
+        entries.map((entry) => (
+          <li>
+            <div class="aside">
+              {entry.data.thumbnail && (
+                <a class="shot-link" href={entry.data.url} target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+                  <Image
+                    class="shot"
+                    src={entry.data.thumbnail}
+                    alt=""
+                    widths={[320, 640]}
+                    sizes="(max-width: 640px) 100vw, 240px"
+                    loading="lazy"
+                  />
+                </a>
+              )}
+              <div class="stack">
+                {entry.data.stack.map((item) => (
+                  <span>{item}</span>
+                ))}
+              </div>
+            </div>
+            <div class="body">
+              <div class="meta">
+                <span class="entity" set:html={attribution(entry.data.chapter?.id)} />
+                <span class="role">{entry.data.role}</span>
+                {entry.data.status !== 'published' && <span class="draft">{entry.data.status}</span>}
+              </div>
+
+              <h2>
+                <a href={entry.data.url} target="_blank" rel="noopener noreferrer">
+                  {entry.data.name} &nearr;
+                </a>
+              </h2>
+
+              <p class="summary">{entry.data.summary}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    {entries.length === 0 && <p class="empty">No projects published yet.</p>}
+
+    <a class="back" href="/">&larr; Back to the story</a>
+
+    <Footer />
+  </main>
+</Base>
+
+<style>
+  main {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .intro {
+    padding: clamp(48px, 9vw, 80px) 0 clamp(32px, 5vw, 44px);
+    max-width: var(--prose);
+  }
+
+  h1 {
+    font-size: clamp(27px, 4.4vw, 38px);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+
+  .intro p {
+    font-size: clamp(17px, 2.4vw, 19px);
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* Quieter than the intro above it: a standing caveat about sites that are
+     no longer mine, not part of the pitch. */
+  .intro .caveat {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: clamp(14px, 2vw, 18px);
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .list li {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .list > li {
+    display: flex;
+    gap: clamp(20px, 4vw, 32px);
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: clamp(28px, 4vw, 36px) 0;
+  }
+
+  /* Left column: thumbnail with the stack tucked underneath, which uses the
+     space the thumbnail was leaving empty and keeps rows shorter. */
+  .aside {
+    flex: 0 0 auto;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .shot-link {
+    display: block;
+  }
+
+  h2 a:hover {
+    border-bottom-color: var(--ink);
+  }
+
+  /* Same treatment as the portrait, so screenshots sit inside the palette
+     rather than pasted on top of it. */
+  .list :global(.shot) {
+    width: 240px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top;
+    flex: 0 0 auto;
+    filter: grayscale(var(--thumb-grayscale));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .body {
+    flex: 1 1 300px;
+  }
+
+  /* Stacked: entity on its own line, role beneath. They don't fit side by
+     side at this column width anyway. */
+  .meta {
+    font-family: var(--mono);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .entity {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .draft {
+    margin-left: 8px;
+  }
+
+  .draft {
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
+  h2 {
+    font-size: clamp(19px, 2.6vw, 21px);
+    font-weight: 600;
+    margin: 0 0 8px;
+    text-wrap: pretty;
+  }
+
+  h2 a {
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .summary {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .stack span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+  }
+
+  .empty {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--hairline);
+    padding-top: 28px;
+    margin: 0;
+  }
+
+  .back {
+    font-family: var(--mono);
+    display: inline-block;
+    margin: clamp(40px, 6vw, 56px) 0;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border-bottom: 1px solid var(--underline);
+  }
+
+</style>
+

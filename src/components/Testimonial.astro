@@ -1,0 +1,129 @@
+---
+import { Image } from 'astro:assets';
+import type { Testimonial } from '../data/testimonials';
+
+interface Props {
+  testimonial: Testimonial;
+}
+
+const { testimonial } = Astro.props;
+
+// Falls back to an initials monogram when there is no headshot, echoing the
+// favicon, so an entry without a photo still reads as finished.
+const initials = testimonial.name
+  .split(/\s+/)
+  .map((part) => part[0])
+  .slice(0, 2)
+  .join('');
+---
+
+<figure>
+  <figcaption>
+    {
+      testimonial.avatar ? (
+        <Image
+          class="avatar"
+          src={testimonial.avatar}
+          alt={`Portrait of ${testimonial.name}`}
+          widths={[44, 88]}
+          sizes="44px"
+          loading="lazy"
+        />
+      ) : (
+        <span class="avatar monogram" aria-hidden="true">
+          {initials}
+        </span>
+      )
+    }
+    <span class="who">
+      <span class="name">{testimonial.name}</span>
+      <span class="role" set:html={testimonial.relationship} />
+    </span>
+  </figcaption>
+
+  <span class="mark" aria-hidden="true">&ldquo;</span>
+  <blockquote>{testimonial.quote}</blockquote>
+</figure>
+
+<style>
+  figure {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: clamp(16px, 2.4vw, 20px);
+  }
+
+  /* Oversized opening quote. Set in the hairline colour so it reads as a
+     mark rather than as text competing with the quotation itself. */
+  /* Smaller now that the attribution leads: the card is already legible as a
+     quotation, so the mark only has to punctuate it. */
+  .mark {
+    display: block;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 0.62;
+    height: 0.4em;
+    color: var(--border);
+    margin: 14px 0 6px;
+    user-select: none;
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--body);
+    text-wrap: pretty;
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Same treatment as the portrait: circular, lightly desaturated, hairline
+     border, so a colour headshot sits inside the monochrome palette. */
+  figcaption :global(.avatar) {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
+    filter: grayscale(0.25);
+    border: 1px solid var(--border);
+  }
+
+  .monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .role {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>

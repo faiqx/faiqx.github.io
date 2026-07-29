@@ -85,9 +85,10 @@ const titleId = `chapter-title-${index}`;
     padding: 0 0 clamp(44px, 7vw, 56px) clamp(26px, 5vw, 40px);
   }
 
-  .chapter:last-child {
-    padding-bottom: 4px;
-  }
+  /* No :last-child override here on purpose. Collapsing the final chapter's
+     padding stops the timeline rule a few pixels under its content while
+     every other chapter carries ~50px, which reads as the line being cut
+     short. Uniform padding keeps the rhythm even down the whole column. */
 
   .dot {
     position: absolute;
@@ -166,13 +167,14 @@ const titleId = `chapter-title-${index}`;
     margin-top: 14px;
   }
 
-  /* Links away from the page. Separated from the toggle and marked with a
-     rule so the two don't read as one row of equivalent choices. */
+  /* Links away from the page. Set apart from the toggle by space alone: a
+     rule here would be identical to the section dividers, so a separator
+     inside a chapter would look the same as one between sections. The gap is
+     wider than the body-to-toggle gap, which is what does the grouping. */
   .related {
     list-style: none;
-    margin: clamp(18px, 3vw, 22px) 0 0;
-    padding: 14px 0 0;
-    border-top: 1px solid var(--hairline);
+    margin: clamp(18px, 2.8vw, 24px) 0 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;

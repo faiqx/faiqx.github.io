@@ -67,6 +67,38 @@ The favicon and OG card are generated from the site's typeface. A font swap
 silently leaves them stale unless regenerated — and the same is true in reverse
 when reverting.
 
+## A hairline means "section boundary" and nothing else
+
+This page uses a full-width hairline as its section divider. Any other rule
+drawn at the same weight and colour reads as a section break too, so it
+fragments whatever it was meant to organise.
+
+Two instances, both caught by Faiq: a rule added above the stack line stranded
+it between two dividers so it looked like its own tiny section, and a rule
+inside each chapter made a within-chapter separator identical to a
+between-section one.
+
+Both were reaching for a rule to add emphasis or separation. **Space and
+contrast do that job.** Before adding a border, check what a border already
+means in this design. Audit with:
+
+    document.querySelectorAll('body *')  // filter on computed border width
+
+## Keep principles domain-agnostic
+
+A principle said "code that handles money or medical data", which is just a
+description of the last two jobs. It reads as autobiography where the section
+promises a general standard. Faiq caught it: "sounds so project specific,
+should be agnostic."
+
+Write the condition, not the domain: "where a mistake is expensive". Techniques
+can stay concrete (idempotent writes, spoof-resistant webhooks) because those
+are evidence of rigour, not claims about an industry.
+
+Same instinct applies to hedging. "Much of my code is written with AI now"
+leads with the concession and answers an accusation nobody made. Lead with the
+standard and let the tool be the subordinate clause.
+
 ## Ask before publishing about a client
 
 The incident write-up was strong material and nearly went out naming a client

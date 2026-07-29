@@ -14,7 +14,6 @@ import portrait from '../assets/photo.jpeg';
 // Chapters with their case studies attached, derived from the foreign keys.
 // Visibility cascades, so a hidden chapter takes its children with it.
 const timeline = await getTimeline();
-const hasWork = timeline.some((row) => row.caseStudies.length > 0);
 ---
 
 <Base>
@@ -59,13 +58,6 @@ const hasWork = timeline.some((row) => row.caseStudies.length > 0);
           ))
         }
       </div>
-      {
-        hasWork && (
-          <a class="all-work" href="/work/">
-            All case studies &rarr;
-          </a>
-        )
-      }
     </section>
 
     {/* how I work */}
@@ -184,8 +176,13 @@ const hasWork = timeline.some((row) => row.caseStudies.length > 0);
   }
 
   /* story */
+  /* Bottom padding matches the other sections. Without it the section's edge
+     is the timeline's own last chapter padding, so the rail runs straight
+     into the divider and terminates against it 5px in from the rule's end,
+     which reads as a broken corner rather than a deliberate join. */
   .story {
     padding-top: var(--section-pad);
+    padding-bottom: var(--section-pad);
   }
 
   .story .section-label {
@@ -195,18 +192,6 @@ const hasWork = timeline.some((row) => row.caseStudies.length > 0);
   .timeline {
     border-left: 1px solid var(--border);
     margin-left: 5px;
-  }
-
-  .all-work {
-    display: inline-block;
-    margin-top: clamp(32px, 5vw, 44px);
-    margin-left: clamp(31px, 5vw, 45px);
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink);
-    border-bottom: 1px solid var(--underline);
   }
 
   /* how I work */

@@ -13,24 +13,38 @@ const links = [
 <header>
   <div class="bar">
     <a class="wordmark" href="/">{site.name}</a>
-    {
-      links.length > 0 && (
-        <nav>
-          {links.map(({ href, label }) => (
-            <a href={href}>{label}</a>
-          ))}
-        </nav>
-      )
-    }
+    <div class="right">
+      {
+        links.length > 0 && (
+          <nav>
+            {links.map(({ href, label }) => (
+              <a href={href}>{label}</a>
+            ))}
+          </nav>
+        )
+      }
+      {/* Static label rather than one describing the target scheme, which
+          would have to be kept in sync with a state the CSS may own. */}
+      <button class="theme" type="button" data-theme-toggle aria-label="Switch theme">
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.75" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <path d="M8 1.25a6.75 6.75 0 0 0 0 13.5z" fill="currentColor" />
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
+
+<script>
+  import '../scripts/theme';
+</script>
 
 <style>
   header {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(245, 245, 244, 0.86);
+    background: var(--bg-blur);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--hairline);
   }
@@ -60,5 +74,32 @@ const links = [
 
   nav a {
     white-space: nowrap;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 4vw, 28px);
+  }
+
+  .theme {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .theme:hover {
+    color: var(--ink);
+  }
+
+  /* Without JS the button cannot do anything, and the page already follows
+     the system scheme, so don't offer a control that would not respond. */
+  :global(html:not(.js)) .theme {
+    display: none;
   }
 </style>

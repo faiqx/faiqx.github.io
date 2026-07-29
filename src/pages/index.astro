@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import Chapter from '../components/Chapter.astro';
 import Principle from '../components/Principle.astro';
 import Testimonial from '../components/Testimonial.astro';
@@ -22,7 +23,7 @@ const timeline = await getTimeline();
   <main id="top">
     {/* opening */}
     <section class="opening">
-      <div class="kicker">{site.role} · seven years in</div>
+      <div class="kicker">{site.role} · 7 years in · Jakarta time, EU hours</div>
       <h1>
         For seven years I&rsquo;ve been the engineer teams reach for when the system simply has
         to&nbsp;work.
@@ -105,10 +106,7 @@ const timeline = await getTimeline();
       </p>
     </section>
 
-    <footer class="rule">
-      <span>&copy; 2026 {site.name}</span>
-      <span>Jakarta time, EU hours</span>
-    </footer>
+    <Footer />
   </main>
 </Base>
 
@@ -281,14 +279,4 @@ const timeline = await getTimeline();
   }
 
   /* footer */
-  footer {
-    font-family: var(--mono);
-    padding: 28px 0 48px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--muted);
-  }
 </style>

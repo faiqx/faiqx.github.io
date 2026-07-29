@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
 import { site } from '../../data/site';
 import { getCaseStudies } from '../../data/content';
 import { getEntry } from 'astro:content';
@@ -75,10 +76,7 @@ const articleSchema = {
 
     <a class="back" href="/#story">&larr; Back to the story</a>
 
-    <footer class="rule">
-      <span>&copy; 2026 {site.name}</span>
-      <span>Jakarta time, EU hours</span>
-    </footer>
+    <Footer />
   </main>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(articleSchema)} />
@@ -224,14 +222,4 @@ const articleSchema = {
     border-bottom: 1px solid var(--underline);
   }
 
-  footer {
-    padding: 28px 0 48px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
 </style>

@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
 import { getCaseStudies, getChapters } from '../../data/content';
 import { site } from '../../data/site';
 
@@ -49,10 +50,7 @@ const description =
 
     <a class="back" href="/">&larr; Back to the story</a>
 
-    <footer class="rule">
-      <span>&copy; 2026 {site.name}</span>
-      <span>Jakarta time, EU hours</span>
-    </footer>
+    <Footer />
   </main>
 </Base>
 
@@ -174,14 +172,4 @@ const description =
     border-bottom: 1px solid var(--underline);
   }
 
-  footer {
-    padding: 28px 0 48px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
 </style>

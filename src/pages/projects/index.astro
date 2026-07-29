@@ -24,7 +24,11 @@ const description = 'Things I have built that are live and public.';
   <main>
     <section class="intro">
       <h1>Projects</h1>
-      <p>Things I have built that are live and public. Each one links straight to the real thing.</p>
+      <p>Things I have built that are live and public.</p>
+      <p class="caveat">
+        I still maintain some of these. Others I handed over years ago and may have changed, gone
+        unmaintained, or become unreachable since.
+      </p>
     </section>
 
     <ol class="list">
@@ -107,6 +111,15 @@ const description = 'Things I have built that are live and public.';
     color: var(--body);
     margin: 0;
     text-wrap: pretty;
+  }
+
+  /* Quieter than the intro above it: a standing caveat about sites that are
+     no longer mine, not part of the pitch. */
+  .intro .caveat {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: clamp(14px, 2vw, 18px);
   }
 
   .list {

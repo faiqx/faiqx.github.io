@@ -13,14 +13,14 @@ export const principles: Principle[] = [
     body: 'Data model, API, UI, deploy, and the on-call that follows. Half-ownership is how things fall between the cracks.',
   },
   {
-    title: 'Assume a hostile environment where it counts',
-    body: 'Code that handles money or medical data gets idempotent writes, spoof-resistant webhooks, and tests that prove one tenant can never read another&rsquo;s data.',
+    title: 'Assume a hostile environment',
+    body: 'Where a mistake is expensive, code gets idempotent writes, spoof-resistant webhooks, and tests that prove one tenant can never read another&rsquo;s data.',
   },
   {
     title: 'Judge code by its guarantees',
-    body: 'Much of my code is written with AI now. What makes it production-grade hasn&rsquo;t changed: tests that prove behavior, robustness under failure, and the discipline of doing things the right way even when nobody is watching.',
+    body: 'Tests that prove behavior, robustness under failure, and the discipline of doing things the right way even when nobody is watching. That standard doesn&rsquo;t change because a model wrote the first draft.',
   },
 ];
 
 export const stackLine =
-  'Mostly TypeScript, Node.js, React, and PostgreSQL. Go when memory matters. Claude for the typing, me for the judgment. Comfortable anywhere in the stack.';
+  'Mostly TypeScript, Node.js, React, and PostgreSQL. Go when memory matters. Comfortable anywhere in the stack.';

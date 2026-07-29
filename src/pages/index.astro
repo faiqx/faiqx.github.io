@@ -220,18 +220,31 @@ const hasWork = timeline.some((row) => row.caseStudies.length > 0);
     margin-bottom: clamp(28px, 5vw, 40px);
   }
 
+  /* Two columns rather than one long stack. Four heading-and-paragraph pairs
+     at identical weight read as a wall in a single narrow column, and this is
+     the only section on the page without its own structure. */
   .principles {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(24px, 4vw, 32px);
-    max-width: var(--prose);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(28px, 4vw, 36px) clamp(32px, 5vw, 48px);
   }
 
+  @media (max-width: 620px) {
+    .principles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* Lifted off --muted so it does not read as the fine print of the section
+     above. Deliberately no rule above it: rules divide sections on this page,
+     so one here would strand the line between two dividers and make it look
+     like a section of its own. Contrast and space do the work instead. */
   .stack {
     font-family: var(--mono);
     font-size: 13px;
     line-height: 1.8;
-    color: var(--muted);
+    color: var(--secondary);
+    max-width: var(--prose);
     margin: clamp(32px, 5vw, 44px) 0 0;
   }
 
